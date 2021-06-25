@@ -6,15 +6,13 @@
     <title>SessionStorage</title>
     <link rel="stylesheet" href="mysession.css">
     <script type="text/javascript">
-        if (sessionStorage.getItem("temp" + 0) == null) 
-        {
+        if (sessionStorage.getItem("temp" + 0) == null) {
             var a = 0;
-            var b=0;
+            var b = 0;
         }
-        else 
-        {
+        else {
             var a = sessionStorage.getItem("a");
-            var b =sessionStorage.getItem("b");
+            var b = sessionStorage.getItem("b");
         }
         localStorage.setItem("a", a);
         window.onload = function () {
@@ -54,6 +52,9 @@
 
             }
 
+
+            addTodo('');
+            update();
             a = localStorage.getItem("a");
 
             function update() {
@@ -88,37 +89,58 @@
                         var item = document.createElement('div');
                         var itemContent = document.createElement('div');
                         var itemDelete = document.createElement('button');
-                        var iteminput=document.createElement('input');
+                        var itemDeleteAll = document.createElement('button');
+                        var iteminput = document.createElement('input');
                         item.classList.add('list-item');
                         it.completed && item.classList.add(CL_COMPLETED);
                         itemContent.innerHTML = msg;
                         itemContent.className = 'content';
                         // itemContent.style="display: ;"
                         itemDelete.type = 'button';
+                        itemDeleteAll.type = 'button';
+                        itemDeleteAll.innerHTML = ' 删除全部 ';
                         itemDelete.innerHTML = ' X ';
                         itemDelete.className = 'delete';
-                        iteminput.type='text';
+                        itemDeleteAll.className = 'deleteAll';
+                        iteminput.setAttribute('type', 'text');
+                        iteminput.setAttribute('class', 'edit');
+                        iteminput.setAttribute('value', msg);
                         item.appendChild(itemContent);
                         item.appendChild(itemDelete);
+                        item.appendChild(itemDeleteAll);
                         item.appendChild(iteminput);
                         list.insertBefore(item, list.childNodes[0]);
 
                         // bind events
-                        item.addEventListener('click', function () {
+                        itemContent.addEventListener('click', function () {
                             it.completed = !it.completed;
                             sessionStorage.setItem("status" + index, it.completed);
                             console.log("index:" + index);
-                            console.log("i:"+i);
+                            console.log("i:" + i);
                             console.log("item completed" + index + ":" + it.completed);
                             update();
                         });
                         itemDelete.addEventListener('click', function (event) {
-                            var b=sessionStorage.getItem('b');
+                            var b = sessionStorage.getItem('b');
                             sessionStorage.setItem("isdeleted" + index, true);
                             console.log("remove status" + index);
                             items.splice(index, 1);
                             update();
                             event.stopPropagation();
+                        });
+                        itemDeleteAll.addEventListener('click', function (event) {
+                            for (var se = 0; se < a; se++) {
+                                sessionStorage.setItem("isdeleted" + se, true);
+                            }
+                            update();
+                        });
+                        iteminput.addEventListener('keyup', function (ev) {
+                            if (ev.keyCode === 27) { // Esc
+                                console.log('exit');
+                            } else if (ev.keyCode === 13) {
+                                it.msg = this.value;
+                                console.log("msg="+this.value);
+                            }
                         });
                     })(i);
                 }
@@ -165,7 +187,7 @@
 <body>
 
 
-    <input type="text" id="todo" placeholder="to do something" autofocus>
+    <input type="text" id="todo" placeholder="to do" autofocus>
     <div id="list"></div>
     <div id="count"></div>
 
